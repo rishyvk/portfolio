@@ -1,0 +1,132 @@
+/* Brown, earthy About page */
+.about-page {
+  min-height: 100vh;
+  padding: 2.5rem 1.8rem;
+  background: radial-gradient(circle at top left, #8b5e3c, #3b2415 55%, #1d130e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f8f0e9;
+  position: relative;
+  overflow: hidden;
+}
+
+/* floating aesthetic shapes */
+.about-shapes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #f5e0c3, rgba(245, 224, 195, 0));
+  opacity: 0.12;
+  filter: blur(1px);
+  animation: floatSoft 26s ease-in-out infinite alternate;
+}
+
+.shape-1 {
+  width: 220px;
+  height: 220px;
+  top: 5%;
+  left: -40px;
+  animation-duration: 30s;
+}
+
+.shape-2 {
+  width: 180px;
+  height: 180px;
+  bottom: -40px;
+  right: 8%;
+  animation-duration: 26s;
+}
+
+.shape-3 {
+  width: 130px;
+  height: 130px;
+  top: 50%;
+  right: 60%;
+  animation-duration: 32s;
+}
+
+.shape-4 {
+  width: 260px;
+  height: 260px;
+  bottom: -60px;
+  left: 30%;
+  animation-duration: 36s;
+}
+
+/* Back link */
+.back-link {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.7rem;
+  text-decoration: none;
+  color: #f2dfcf;
+  font-size: 0.9rem;
+  opacity: 0.85;
+  z-index: 2;
+}
+
+.back-link.back-light {
+  color: #e5fff1;
+}
+
+/* About card */
+.about-card {
+  position: relative;
+  z-index: 1;
+  max-width: 620px;
+  width: 100%;
+  padding: 2.4rem 2rem;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(63, 39, 26, 0.96),
+    rgba(43, 25, 18, 0.96)
+  );
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(248, 240, 233, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.about-title {
+  font-size: clamp(1.9rem, 3vw, 2.2rem);
+  margin-bottom: 0.5rem;
+}
+
+.about-tagline {
+  font-size: 0.98rem;
+  opacity: 0.9;
+  margin-bottom: 1.7rem;
+}
+
+.about-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.95;
+  margin-bottom: 0.9rem;
+}
+
+/* Skill / identity pills */
+.about-pills {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.about-pills span {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 224, 195, 0.45);
+  background: rgba(245, 224, 195, 0.06);
+}

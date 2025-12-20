@@ -1,0 +1,21 @@
+/* Responsive */
+@media (max-width: 800px) {
+  .academics-web {
+    position: static;
+    height: auto;
+  }
+
+  .corner,
+  .center-card {
+    position: static;
+    width: auto;
+    transform: none;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  .academics-web::before,
+  .academics-web::after {
+    display: none;
+  }
+}

@@ -1,0 +1,236 @@
+/* Main sky app layout */
+.app {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+  overflow: hidden;
+  color: var(--earth-brown);
+}
+
+/* Sky layer with perspective */
+.sky {
+  position: absolute;
+  inset: 0;
+  perspective: 900px;
+  pointer-events: none;
+}
+
+/* 3D Sun */
+.sun {
+  position: absolute;
+  top: 40px;
+  right: 50px;
+  width: 90px;
+  height: 90px;
+  background: radial-gradient(circle, #ffd700 0%, #ffa500 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 60px 20px rgba(255, 223, 0, 0.6);
+  transform-style: preserve-3d;
+  animation:
+    sunFloat3d 18s ease-in-out infinite alternate,
+    glow 2.3s ease-in-out infinite alternate;
+}
+
+.sun::before,
+.sun::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160px;
+  height: 160px;
+  background: repeating-conic-gradient(
+    rgba(255, 215, 0, 0.6) 0deg 15deg,
+    transparent 15deg 30deg
+  );
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  opacity: 0.35;
+}
+
+/* 3D Clouds */
+.cloud {
+  position: absolute;
+  background: var(--white);
+  border-radius: 50px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.18),
+    25px 15px 40px rgba(0, 0, 0, 0.08);
+  opacity: 0.95;
+  transform-style: preserve-3d;
+  filter: blur(0.2px);
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: var(--white);
+  border-radius: 50%;
+}
+
+.cloud::before {
+  width: 70%;
+  height: 70%;
+  top: -35%;
+  left: 5%;
+}
+
+.cloud::after {
+  width: 55%;
+  height: 55%;
+  top: -25%;
+  right: 0;
+}
+
+/* Individual cloud positions and animations */
+.cloud-1 {
+  top: 18%;
+  left: 5%;
+  width: 210px;
+  height: 90px;
+  animation: floatCloud1 28s ease-in-out infinite alternate;
+}
+
+.cloud-2 {
+  top: 40%;
+  right: 8%;
+  width: 240px;
+  height: 100px;
+  animation: floatCloud2 24s ease-in-out infinite alternate;
+}
+
+.cloud-3 {
+  top: 65%;
+  left: 20%;
+  width: 180px;
+  height: 80px;
+  animation: floatCloud3 30s ease-in-out infinite alternate;
+}
+
+.cloud-4 {
+  top: 55%;
+  right: 30%;
+  width: 160px;
+  height: 75px;
+  animation: floatCloud4 26s ease-in-out infinite alternate;
+}
+
+/* Hover lift */
+.cloud:hover {
+  transform: translate3d(0, -12px, 80px) scale(1.05);
+}
+
+/* Centered content card */
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  backdrop-filter: blur(6px);
+  background: radial-gradient(
+    circle at top,
+    rgba(255, 255, 255, 0.7),
+    rgba(255, 255, 255, 0.18)
+  );
+  border-radius: 24px;
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+  animation: fadeUp 0.9s ease-out forwards;
+  opacity: 0;
+  max-width: 520px;
+}
+
+/* Landing typography */
+.title {
+  font-size: clamp(2.3rem, 4vw, 3rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+
+.subtitle {
+  font-size: 0.98rem;
+  opacity: 0.9;
+  margin-bottom: 1.8rem;
+}
+
+/* Countdown styling */
+.countdown {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.8rem;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+.time-block {
+  min-width: 68px;
+  padding: 0.6rem 0.7rem;
+  border-radius: 12px;
+  background: rgba(46, 75, 46, 0.12);
+  border: 1px solid rgba(46, 75, 46, 0.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-value {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--earth-green);
+}
+
+.time-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+/* Landing buttons row */
+.cta-row {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+/* Button */
+.about-link {
+  text-decoration: none;
+}
+
+.about-btn {
+  background-color: var(--earth-green);
+  color: var(--white);
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(46, 75, 46, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.about-btn.secondary {
+  background-color: #ffffff;
+  color: var(--earth-green);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.about-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 40px rgba(46, 75, 46, 0.55);
+  background-color: #355d35;
+}
+
+.about-btn.secondary:hover {
+  background-color: #e7f7ea;
+}

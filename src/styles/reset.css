@@ -1,0 +1,24 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --sky-top: #87cefa;
+  --sky-bottom: #b0e0e6;
+  --earth-brown: #4b2e2b;
+  --earth-green: #2e4b2e;
+  --white: #ffffff;
+}
+
+body,
+html,
+#root {
+  height: 100%;
+  width: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}

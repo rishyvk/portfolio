@@ -1,0 +1,181 @@
+/* Blue aesthetic for What's Next page */
+
+.whats-page {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: 3rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f5fbff;
+}
+
+.whats-sky {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, #b5e2ff, #4d88ff 45%, #1a3a6f);
+  pointer-events: none;
+}
+
+/* soft grain overlay */
+.whats-sky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.12) 1px,
+    transparent 0
+  );
+  background-size: 3px 3px;
+  opacity: 0.25;
+}
+
+/* sun */
+.whats-sun {
+  position: absolute;
+  top: 48px;
+  right: 64px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe88a 0%, #ffb347 70%);
+  box-shadow: 0 0 50px 18px rgba(255, 219, 120, 0.7);
+}
+
+/* clouds */
+.whats-cloud {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 40px;
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.18),
+    18px 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+.whats-cloud::before,
+.whats-cloud::after {
+  content: "";
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+.whats-cloud::before {
+  width: 70%;
+  height: 70%;
+  top: -40%;
+  left: 4%;
+}
+
+.whats-cloud::after {
+  width: 55%;
+  height: 55%;
+  top: -28%;
+  right: 0;
+}
+
+.whats-cloud-1 {
+  top: 20%;
+  left: 10%;
+  width: 200px;
+  height: 90px;
+}
+
+.whats-cloud-2 {
+  bottom: 18%;
+  right: 14%;
+  width: 190px;
+  height: 85px;
+}
+
+/* center card */
+.whats-card {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  width: 100%;
+  padding: 2.3rem 2rem;
+  border-radius: 22px;
+  background: radial-gradient(
+    circle at top,
+    rgba(15, 35, 76, 0.96),
+    rgba(7, 18, 44, 0.96)
+  );
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(201, 224, 255, 0.25);
+  backdrop-filter: blur(12px);
+  text-align: center;
+}
+
+.whats-title {
+  font-size: clamp(2rem, 3vw, 2.3rem);
+  margin-bottom: 0.6rem;
+}
+
+.whats-tagline {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 1.4rem;
+}
+
+.whats-body {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  opacity: 0.95;
+}
+
+/* reuse back-link but lighter color */
+.whats-page .back-link {
+  color: #ddeaff;
+}
+
+
+@media (max-width: 600px) {
+
+  
+  .content {
+    margin: 0 1.3rem;
+    padding: 2rem 1.3rem;
+  }
+
+  .countdown {
+    gap: 0.4rem;
+  }
+
+  .time-block {
+    min-width: 60px;
+  }
+
+  .sun {
+    top: 24px;
+    right: 24px;
+    width: 70px;
+    height: 70px;
+  }
+
+  .about-card {
+    padding: 2rem 1.4rem;
+  }
+
+  .back-link {
+    left: 1.2rem;
+  }
+
+  .academics-page {
+    padding: 2.5rem 1.4rem;
+  }
+  
+}
+.whats-next-btn {
+  margin-top: 0.9rem;
+  padding-inline: 2.2rem;
+}
+
+/* reuse about-page style, just a slightly different vibe */
+.prank-page .about-card.prank-card {
+  text-align: center;
+}
+
