@@ -1,236 +1,269 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 
-const Landing = () => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+/* --- System Components --- */
+
+const SystemStatus = ({ entropy }) => {
+  const signals = ["SYSTEM.IDLE", "SIGNAL STABLE", "AWAITING INTENT", "CORE.ACTIVE", "NODES READY"];
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 90);
-
     const interval = setInterval(() => {
-      const now = new Date();
-      const diff = targetDate - now;
-
-      if (diff <= 0) {
-        clearInterval(interval);
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      setTimeLeft({ days, hours, minutes, seconds });
-    }, 1000);
-
+      setIndex((i) => (i + 1) % signals.length);
+    }, 5000 + entropy * 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [entropy]);
 
   return (
-    <div className="app">
-      <div className="sky">
-        <div className="sun" />
-        <div className="cloud cloud-1" />
-        <div className="cloud cloud-2" />
-        <div className="cloud cloud-3" />
-        <div className="cloud cloud-4" />
+    <div className="system-status-signal" style={{ opacity: 0.15 - (entropy * 0.05) }}>
+      {signals[index]}
+    </div>
+  );
+};
+
+const EnergyDrift = ({ entropy }) => {
+  const particles = useMemo(() => Array.from({ length: 8 }).map((_, i) => ({
+    id: i,
+    delay: i * 2,
+    duration: 15 + Math.random() * 10,
+    pathIndex: i % 3
+  })), []);
+
+  return (
+    <div className="energy-drift-layer">
+      <svg className="energy-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        {particles.map((p) => (
+          <circle key={p.id} r="0.2" className="energy-dot">
+            <animate
+              attributeName="cx"
+              values="-10;110"
+              dur={`${p.duration + entropy * 5}s`}
+              repeatCount="indefinite"
+              begin={`${p.delay}s`}
+            />
+            <animate
+              attributeName="cy"
+              values={`${20 + p.id * 8};${25 + p.id * 8};${20 + p.id * 8}`}
+              dur="10s"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="opacity"
+              values="0;0.5;0"
+              dur={`${p.duration + entropy * 5}s`}
+              repeatCount="indefinite"
+              begin={`${p.delay}s`}
+            />
+          </circle>
+        ))}
+      </svg>
+    </div>
+  );
+};
+
+/* --- System Hooks --- */
+
+const useSystemEngine = (magneticStrength = 4) => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [sessionDuration, setSessionDuration] = useState(0);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * magneticStrength;
+      const y = (e.clientY / window.innerHeight - 0.5) * magneticStrength;
+      setMousePos({ x, y });
+
+      // Update global vignette follow
+      document.body.style.setProperty('--mouse-x', `${(e.clientX / window.innerWidth) * 100}%`);
+      document.body.style.setProperty('--mouse-y', `${(e.clientY / window.innerHeight) * 100}%`);
+    };
+
+    const interval = setInterval(() => {
+      setSessionDuration(prev => Math.min(prev + 1, 100)); // Capped at 100 for entropy calculation
+    }, 60000); // Track minutes
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      clearInterval(interval);
+    };
+  }, [magneticStrength]);
+
+  const entropy = sessionDuration / 100; // 0 to 1 scale
+  return { mousePos, entropy };
+};
+
+/* --- Mode Components --- */
+
+const Landing = () => {
+  const [hoveredID, setHoveredID] = useState(null);
+  const { mousePos, entropy } = useSystemEngine(6);
+
+  return (
+    <div className="system-mode sky-mode" style={{ filter: `brightness(${1 - entropy * 0.2})` }}>
+      <EnergyDrift entropy={entropy} />
+      <SystemStatus entropy={entropy} />
+
+      <div className="scene-background">
+        <div className="abstract-sun" style={{ transform: `translate(${mousePos.x * 0.8}px, ${mousePos.y * 0.8}px)` }} />
+        <div className="abstract-clouds">
+          {[1, 2, 3].map(i => (
+            <div key={i} className={`abstract-cloud cloud-${i}`} style={{ transform: `translate(${mousePos.x * (i * 0.5)}px, ${mousePos.y * (i * 0.5)}px)` }} />
+          ))}
+        </div>
       </div>
 
-      <main className="content">
-        <h1 className="title">Hi There!</h1>
-        <p className="subtitle">
-          Welcome to my "Under Development" Portfolio...
-        </p>
+      <main className="content-core">
+        <div
+          className="system-card intro-card"
+          onMouseEnter={() => setHoveredID('intro')}
+          onMouseLeave={() => setHoveredID(null)}
+          style={{ transform: `rotateY(${mousePos.x}deg) rotateX(${-mousePos.y}deg)` }}
+        >
+          <span className="mode-label">System.Idle</span>
+          <h1 className="title">Hi There!</h1>
+          <p className="subtitle">Welcome to my "Under Development" Portfolio...</p>
 
-        <div className="countdown">
-          <div className="time-block">
-            <span className="time-value">{timeLeft.days}</span>
-            <span className="time-label">Days</span>
+          <div className="system-cta-row">
+            <Link to="/about" className="system-btn-link"><button className="system-btn">About Me</button></Link>
+            <Link to="/academics" className="system-btn-link"><button className="system-btn secondary">Academics</button></Link>
           </div>
-          <div className="time-block">
-            <span className="time-value">{timeLeft.hours}</span>
-            <span className="time-label">Hours</span>
-          </div>
-          <div className="time-block">
-            <span className="time-value">{timeLeft.minutes}</span>
-            <span className="time-label">Minutes</span>
-          </div>
-          <div className="time-block">
-            <span className="time-value">{timeLeft.seconds}</span>
-            <span className="time-label">Seconds</span>
-          </div>
-        </div>
-
-        <div className="cta-row">
-          <Link to="/about" className="about-link">
-            <button className="about-btn">About Me</button>
-          </Link>
-
-          <Link to="/academics" className="about-link">
-            <button className="about-btn secondary">Academics</button>
-          </Link>
         </div>
       </main>
     </div>
   );
 };
 
-const About = () => (
-  <div className="about-page">
-    <div className="about-shapes">
-      <span className="shape shape-1" />
-      <span className="shape shape-2" />
-      <span className="shape shape-3" />
-      <span className="shape shape-4" />
-    </div>
+const About = () => {
+  const [hoveredID, setHoveredID] = useState(null);
+  const { mousePos, entropy } = useSystemEngine(4);
 
-    <Link to="/" className="back-link">
-      ← Back to Sky
-    </Link>
-
-    <div className="about-card">
-      <h2 className="about-title">Hi, I'm Rishi.V</h2>
-      <p className="about-tagline">
-        A self‑called “wanna be whatever you can call me”, but right now, a
-        learning developer.
-      </p>
-
-      <p className="about-body">
-        I enjoy building things that look cool and feel calm, while taking on
-        challenges that push me out of my comfort zone.
-      </p>
-
-      <p className="about-body">
-        Right now, I’m exploring new projects, sharpening my fundamentals, and
-        saying yes to opportunities that help me grow.
-      </p>
-
-      <div className="about-pills">
-        <span>Making</span>
-        <span>The</span>
-        <span>Debut</span>
-        <span>in...</span>
-      </div>
-    </div>
-  </div>
-);
-
-const Academics = () => (
-  <div className="academics-page web-layout">
-    <Link to="/" className="back-link back-light">
-      ← Back to Sky
-    </Link>
-
-    <div className="academics-header">
-      <h2 className="academics-title">Academic Moments</h2>
-      <p className="academics-subtitle">
-        A small board of experiences that shaped how I learn and build.
-      </p>
-    </div>
-
-    <div className="academics-web">
-      {/* center card */}
-      <article className="academic-card center-card">
-        <span className="chip">What&apos;s Next</span>
-        <h3>What Comes Next?</h3>
-        <p>
-          More workshops, more hackathons, more late nights. This card sits in
-          the middle of everything new that gets added to my journey.
-        </p>
-        <Link to="/whats-next" className="about-link">
-          <button className="about-btn secondary whats-next-btn">
-            Reveal?
-          </button>
-        </Link>
-      </article>
-
-
-      {/* top-left corner */}
-      <article className="academic-card corner card-tl">
-        <span className="chip">Workshop</span>
-        <h3>Robotics at PSG Tech</h3>
-        <p>
-          Jumped into an advanced robotics workshop at PSG Tech. Most of it was
-          above my level, but it pushed how I think about hardware and motion.
-        </p>
-      </article>
-
-      {/* top-right corner */}
-      <article className="academic-card corner card-tr">
-        <span className="chip">Entrepreneurship</span>
-        <h3>E‑Cell & IIT Bombay E‑Summit</h3>
-        <p>
-          Joined NGP’s E‑Cell &quot;The Founders Forge&quot; / Infanji and
-          attended IIT Bombay’s E‑Summit, getting exposed to founders and
-          startup culture.
-        </p>
-      </article>
-
-      {/* bottom-left corner */}
-      <article className="academic-card corner card-bl">
-        <span className="chip">Paper Presentation</span>
-        <h3>Karpagam Institute of Technology</h3>
-        <p>
-          Presented my first project idea at Karpagam – a Finch‑style system,
-          but unpaid and focused on doing the job more efficiently.
-        </p>
-      </article>
-
-      {/* bottom-right corner */}
-      <article className="academic-card corner card-br">
-        <span className="chip">Hackathon</span>
-        <h3>BIT – ALMS Project</h3>
-        <p>
-          Built ALMS (Academic Leave Management System) at the BIT Hackathon,
-          turning an academic problem into a working product idea.
-        </p>
-      </article>
-    </div>
-  </div>
-);
-
-const WhatsNext = () => (
-  <div className="whats-page">
-    <div className="whats-sky">
-      <div className="whats-sun" />
-      <div className="whats-cloud whats-cloud-1" />
-      <div className="whats-cloud whats-cloud-2" />
-    </div>
-
-    <Link to="/academics" className="back-link back-light">
-      ← Back to Moments
-    </Link>
-
-    <div className="whats-card">
-      <h2 className="whats-title">Told ya.</h2>
-      <p className="whats-tagline">It will be revealed soon.</p>
-      <p className="whats-body">
-        Ruko Jaara Sabar Karo!!!!!
-      </p>
-    </div>
-  </div>
-);
-
-
-
-const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/academics" element={<Academics />} />
-      <Route path="/whats-next" element={<WhatsNext />} />
-    </Routes>
+    <div className="system-mode about-mode" style={{ filter: `brightness(${0.9 - entropy * 0.2})` }}>
+      <EnergyDrift entropy={entropy} />
+      <SystemStatus entropy={entropy} />
+      <Link to="/" className="back-link">// system.exit()</Link>
+
+      <div className="scene-background">
+        <div className="grounded-glow" style={{ transform: `translate(${mousePos.x * 0.4}px, ${mousePos.y * 0.4}px)` }} />
+      </div>
+
+      <main className="content-core">
+        <article
+          className={`system-card about-card ${hoveredID ? 'hovered' : 'idle'}`}
+          onMouseEnter={() => setHoveredID('about')}
+          onMouseLeave={() => setHoveredID(null)}
+          style={{ transform: `perspective(1000px) rotateY(${mousePos.x}deg) rotateX(${-mousePos.y}deg)` }}
+        >
+          <span className="mode-label">System.Reflection</span>
+          <h2 className="title">Hi, I'm Rishi.V</h2>
+          <p className="tagline">A learning developer building things that look cool and feel calm.</p>
+          <p className="body-text">I enjoy taking on challenges that push me out of my comfort zone and sharpening my fundamentals.</p>
+
+          <div className="pills-row">
+            {['Making', 'The', 'Debut', 'in...'].map(p => (
+              <span key={p} className="system-pill">{p}</span>
+            ))}
+          </div>
+        </article>
+      </main>
+    </div>
   );
 };
 
+const Academics = () => {
+  const [hoveredID, setHoveredID] = useState(null);
+  const [focusedID, setFocusedID] = useState(null);
+  const { mousePos, entropy } = useSystemEngine(8);
+
+  const cards = [
+    { id: "tl", type: "Hardware", title: "Robotics at PSG Tech", desc: "Challenged my technical limits through hardware and motion engineering." },
+    { id: "tr", type: "Venture", title: "IIT Bombay E‑Summit", desc: "Exposed to high-dimensional founder thinking and startup system architecture." },
+    { id: "ml", type: "Network", title: "PeerZone Node", desc: "Architecting a decentralized educational node focused on peer-to-peer exchange." },
+    { id: "mr", type: "Intelligence", title: "ManuScript Engine", desc: "Developing a generative architecture for academic synthesis." },
+    { id: "bl", type: "Signal", title: "Karpagam Synthesis", desc: "First project deployment: an efficiency system for optimized throughput." },
+    { id: "br", type: "Product", title: "ALMS System", desc: "Reverse-engineered academic friction into a streamlined LMS." },
+  ];
+
+  const getCardState = (id) => {
+    if (focusedID === id) return "focused";
+    if (focusedID && focusedID !== id) return "dormant";
+    if (hoveredID === id) return "hover";
+    if (hoveredID && hoveredID !== id) return "dormant";
+    return "idle";
+  };
+
+  return (
+    <div className={`system-mode engine-mode ${focusedID ? "focus-active" : ""}`} style={{ filter: `brightness(${1 - entropy * 0.1})` }}>
+      <EnergyDrift entropy={entropy} />
+      <SystemStatus entropy={entropy} />
+      <Link to="/" className="back-link">// system.exit()</Link>
+
+      <div className="mode-header">
+        <h2 className="title">Interactive System</h2>
+        <p className="subtitle">Experience nodes react to intent. Signal energy flows from core.</p>
+      </div>
+
+      <div
+        className="engine-scene"
+        style={{ transform: `perspective(2000px) rotateY(${mousePos.x}deg) rotateX(${-mousePos.y}deg) ${focusedID ? 'translateZ(-100px)' : ''}` }}
+      >
+        <svg className="connector-svg" viewBox="0 0 1100 520">
+          {[
+            { id: "tl", x: 160, y: 80 }, { id: "tr", x: 940, y: 80 },
+            { id: "ml", x: 160, y: 260 }, { id: "mr", x: 940, y: 260 },
+            { id: "bl", x: 160, y: 440 }, { id: "br", x: 940, y: 440 }
+          ].map((pos) => {
+            const cx = 550;
+            const cy = 260;
+            const pathD = `M ${cx} ${cy} C ${cx + (pos.x - cx) * 0.45} ${cy} ${cx + (pos.x - cx) * 0.55} ${pos.y} ${pos.x} ${pos.y}`;
+            const isActive = hoveredID === pos.id || focusedID === pos.id;
+            return (
+              <g key={pos.id} className={isActive ? "active" : "idle-node"}>
+                <path d={pathD} className="connector-path" />
+                <circle r="1.5" className="signal-dot">
+                  <animateMotion dur={isActive ? `${0.8 + entropy * 0.5}s` : `${3 + entropy * 2}s`} repeatCount="indefinite" path={pathD} />
+                </circle>
+              </g>
+            );
+          })}
+        </svg>
+
+        <article className={`system-card core-card ${hoveredID || focusedID ? "active" : ""}`}>
+          <span className="mode-label">System.Brain</span>
+          <h3>Origin of Intent</h3>
+          <p>The system origin. Redirect energy flow by focusing on a node.</p>
+          {focusedID && <button onClick={() => setFocusedID(null)} className="reset-btn">system.reset()</button>}
+        </article>
+
+        {cards.map((card) => (
+          <article
+            key={card.id}
+            className={`system-card node-card card-${card.id} ${getCardState(card.id)}`}
+            onMouseEnter={() => setHoveredID(card.id)}
+            onMouseLeave={() => setHoveredID(null)}
+            onClick={() => setFocusedID(focusedID === card.id ? null : card.id)}
+          >
+            <span className="mode-label">{card.type}</span>
+            <h3 className="node-title">{card.title}</h3>
+            <p className="node-desc">{card.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <div className="global-system-container">
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/academics" element={<Academics />} />
+      </Routes>
+    </div>
+  );
+};
 
 export default App;

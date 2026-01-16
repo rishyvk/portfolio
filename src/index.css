@@ -3,5 +3,108 @@
 @import "./styles/landing.css";
 @import "./styles/about.css";
 @import "./styles/academics.css";
-@import "./styles/academics-responsive.css";
-@import "./styles/whats.css";
+
+:root {
+    /* System Colors */
+    --system-bg: #041209;
+    --system-accent: #bbf7d0;
+    --text-primary: #f0fdf4;
+    --text-secondary: #94a3b8;
+
+    /* Mode Foundations */
+    --card-bg: rgba(10, 45, 25, 0.4);
+    --card-border: rgba(255, 255, 255, 0.05);
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    --card-radius: 24px;
+    --card-padding: 2rem;
+
+    /* Motion API */
+    --system-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-slow: 0.8s;
+    --motion-fast: 0.3s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--system-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Ambient Atmospheric Layer */
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+    pointer-events: none;
+    z-index: 1000;
+    animation: atmosphereBreath 12s ease-in-out infinite alternate;
+}
+
+@keyframes atmosphereBreath {
+    0% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0.6;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes coreBreathe {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.02);
+        opacity: 1;
+    }
+}
+
+/* Atmospheric Status Signals */
+.system-status-signal {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--system-accent);
+    pointer-events: none;
+    z-index: 1000;
+    transition: opacity 1.5s var(--system-ease);
+}
+
+/* Energy Drift Layer */
+.energy-drift-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+}
+
+.energy-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.energy-dot {
+    fill: var(--system-accent);
+    filter: blur(1px);
+}
